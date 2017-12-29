@@ -8,21 +8,37 @@ export default class Account extends Component {
       balance: 0
     }
 
-    this.handleDepositClick = this.handleDepositClick.bind(this)
+    this.handleClick = this.handleClick.bind(this)
+    // this.handleWithdrawClick = this.handleWithdrawClick.bind(this)
   }
 
-  handleDepositClick(e) {
+  handleClick(e) {
     e.preventDefault();
     if (isNaN(this.refs.amount.value)) {
       console.log("Not a number");
-    }
-    else {
+    } else if (this.refs.amount.value < 0){
+      alert("You cannot enter a negative value")
+    } else {
       let amount = +this.refs.amount.value;
-      let newBalance = this.state.balance + amount;
-      this.setState({
-        balance: newBalance
-      })
-      this.refs.amount.value = '';
+      let newBalance;
+
+      if (e.target.value === "Deposit"){
+        newBalance = this.state.balance + amount;
+        this.setState({
+          balance: newBalance
+        })
+        this.refs.amount.value = '';
+      } else {
+        if (this.refs.amount.value > this.state.balance){
+          alert("You cannot withdraw more than you have in your account");
+        } else {
+          newBalance = this.state.balance - amount;
+          this.setState({
+            balance: newBalance
+          })
+          this.refs.amount.value = '';
+        }
+      }
     }
   }
 
@@ -37,7 +53,8 @@ export default class Account extends Component {
         <h2>{this.props.name}</h2>
         <div className={balanceClass}>${this.state.balance}</div>
         <input type="text" placeholder="enter an amount" ref="amount" />
-        <input type="button" value="Deposit" onClick={this.handleDepositClick} />
+        <input type="button" value="Deposit" onClick={this.handleClick} />
+        <input type="button" value="Withdraw" onClick={this.handleClick} />
       </div>
     )
   }
